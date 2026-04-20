@@ -4,5 +4,5 @@
 # Link: https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
 
 train_data:
-  type: pandas.ParquetDataset
-  filepath: data/01_raw/bike_data_train.parquet
+  type: pandas.CSVDataset
+  filepath: data/01_raw/garments_worker_productivity.csv
