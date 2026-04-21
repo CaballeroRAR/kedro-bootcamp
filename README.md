@@ -8,6 +8,33 @@ This is your new Kedro project, which was generated using `kedro 1.3.1`.
 
 Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
 
+## Kedro Project Structure & Data Flow
+
+This section explains the relationship between the YAML configurations, the pipeline registry, and the Python logic in this project.
+
+### 1. Data Catalog (`conf/base/catalog.yml`)
+The [catalog.yml](conf/base/catalog.yml) registers your datasets. It maps logical names used in the code to physical storage.
+*   **Logic:** When a node refers to a dataset name (e.g., `train_data`), Kedro uses this file to determine the file path and dataset type (e.g., `pandas.CSVDataset`).
+
+### 2. Parameters (`conf/base/parameters.yml`)
+Configuration values and hyperparameters are stored in [parameters.yml](conf/base/parameters.yml). 
+*   **Logic:** These are injected into pipelines using the `params:` prefix (e.g., `params:feature_engineering.lag_params`).
+
+### 3. Pipeline Definitions (`src/timeseries_project/pipelines/`)
+Pipelines define the execution graph (DAG).
+*   **Nodes:** Call Python functions from `nodes.py`.
+*   **Inputs/Outputs:** Link to either the **Catalog** (for persistent data) or **Memory** (for intermediate results).
+*   **Example:** A node with `inputs=["train_data"]` loads the dataset defined in the catalog.
+
+### 4. Pipeline Registry (`src/timeseries_project/pipeline_registry.py`)
+This file is the entry point for the Kedro CLI.
+*   **Logic:** It maps string aliases to pipeline objects.
+*   **CLI Mapping:**
+    *   `kedro run` executes the `__default__` pipeline.
+    *   `kedro run --pipeline=feature_eng` executes the `feature_eng` alias.
+
+---
+
 ## Rules and guidelines
 
 In order to get the best out of the template:
