@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [project.scripts]
-"free-bootcamp-mlacademy" = "free_bootcamp_mlacademy.__main__:main"
+"timeseries-project" = "timeseries_project.__main__:main"
 
 [project.entry-points."kedro.hooks"]
 
@@ -51,15 +51,15 @@ dev = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "free_bootcamp_mlacademy.__version__"}
+version = {attr = "timeseries_project.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = false
 
 [tool.kedro]
-package_name = "free_bootcamp_mlacademy"
-project_name = "free-bootcamp-mlacademy"
+package_name = "timeseries_project"
+project_name = "timeseries-project"
 kedro_init_version = "1.3.1"
 tools = "['Linting', 'Testing', 'Custom Logging', 'Documentation', 'Data Structure']"
 example_pipeline = "False"
@@ -68,7 +68,7 @@ source_dir = "src"
 [tool.pytest.ini_options]
 addopts = """
 --cov-report term-missing \
---cov src/free_bootcamp_mlacademy -ra"""
+--cov src/timeseries_project -ra"""
 
 [tool.coverage.report]
 fail_under = 0
