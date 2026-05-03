@@ -29,6 +29,8 @@ dependencies = [
     "fastexcel",
     "kedro-datasets[polars,pandas]",
     "xgboost>=3.2.0",
+    "gcsfs>=2026.4.0",
+    "xlrd>=2.0.2",
 ]
 
 [project.scripts]

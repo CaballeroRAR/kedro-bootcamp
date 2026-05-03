@@ -1,4 +1,4 @@
-import polars as pl
+import pandas as pd
 from typing import Dict, Any, Tuple
 import numpy as np
 from catboost import CatBoostClassifier
@@ -8,47 +8,49 @@ from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 from sklearn.linear_model import LinearRegression
 
-def preprocess_raw_data(df: pl.DataFrame) -> pl.DataFrame:
-    """Clean raw Excel data using Polars."""
+def preprocess_raw_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean raw Excel data using Pandas."""
     target_col = 'default payment next month'
     if target_col in df.columns:
-        df = df.rename({target_col: 'target'})
+        df = df.rename(columns={target_col: 'target'})
     if 'ID' in df.columns:
-        df = df.drop('ID')
+        df = df.drop(columns=['ID'])
     return df
 
-def no_fen_catboost(df: pl.DataFrame, params: Dict[str, Any]) -> pl.DataFrame:
+def no_fen_catboost(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
     """Prepares data for CatBoost."""
     return df
 
 def split_and_balance_data(
-    df: pl.DataFrame, 
+    df: pd.DataFrame, 
     params: Dict[str, Any]
-) -> Tuple[pl.DataFrame, pl.DataFrame, pl.DataFrame, pl.DataFrame]:
-    """Split and apply SMOTE."""
-    X = df.drop('target').to_numpy()
-    y = df['target'].to_numpy()
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Split and apply SMOTE using Pandas."""
+    X = df.drop(columns=['target'])
+    y = df['target']
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, 
         train_size=params["modeling"]["train_fraction"],
         random_state=params["modeling"]["random_seed"],
         stratify=y
     )
+    
     smote = SMOTE(random_state=params["modeling"]["random_seed"])
     X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
-    feature_cols = df.drop('target').columns
-    train_df = pl.from_numpy(X_train_res, schema=feature_cols).with_columns(
-        pl.from_numpy(y_train_res.reshape(-1, 1), schema=['target'])
-    )
-    test_df = pl.from_numpy(X_test, schema=feature_cols).with_columns(
-        pl.from_numpy(y_test.reshape(-1, 1), schema=['target'])
-    )
+    
+    train_df = pd.DataFrame(X_train_res, columns=X.columns)
+    train_df['target'] = y_train_res
+    
+    test_df = X_test.copy()
+    test_df['target'] = y_test
+    
     return train_df, test_df
 
-def train_catboost(train_df: pl.DataFrame, params: Dict[str, Any]) -> CatBoostClassifier:
+def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostClassifier:
     """Train CatBoost Classifier."""
-    X_train = train_df.drop('target').to_pandas()
-    y_train = train_df['target'].to_pandas()
+    X_train = train_df.drop(columns=['target'])
+    y_train = train_df['target']
     
     model_params = params["modeling"]["catboost"]
     cat_features = params["features"]["categorical"]
@@ -57,25 +59,24 @@ def train_catboost(train_df: pl.DataFrame, params: Dict[str, Any]) -> CatBoostCl
     model.fit(X_train, y_train, cat_features=cat_features)
     return model
 
-def predict_probabilities(model: Any, test_df: pl.DataFrame) -> np.ndarray:
+def predict_probabilities(model: Any, test_df: pd.DataFrame) -> np.ndarray:
     """Generate probability predictions."""
-    X_test = test_df.drop('target').to_pandas()
+    X_test = test_df.drop(columns=['target'])
     return model.predict_proba(X_test)[:, 1]
 
-def evaluate_models(y_test: pl.DataFrame, y_prob: np.ndarray) -> Dict[str, float]:
+def evaluate_models(y_test: pd.DataFrame, y_prob: np.ndarray) -> Dict[str, float]:
     """Basic classification metrics."""
-    y_true = y_test['target'].to_numpy().flatten()
+    y_true = y_test['target'].values
     return {
         "auc": roc_auc_score(y_true, y_prob),
         "brier_score": brier_score_loss(y_true, y_prob),
         "log_loss": log_loss(y_true, y_prob)
     }
 
-def evaluate_calibration(y_test: pl.DataFrame, y_prob: np.ndarray) -> Dict[str, float]:
+def evaluate_calibration(y_test: pd.DataFrame, y_prob: np.ndarray) -> Dict[str, float]:
     """Yeh & Lien (2009) Calibration Check: Y = A + BX."""
-    y_true = y_test['target'].to_numpy().flatten()
+    y_true = y_test['target'].values
     
-    # Simple linear regression on probabilities
     lr = LinearRegression()
     lr.fit(y_prob.reshape(-1, 1), y_true)
     
