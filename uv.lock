@@ -600,6 +600,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "notebook" },
     { name = "numpy" },
+    { name = "opendataloader-pdf" },
     { name = "pandas" },
     { name = "plotly" },
     { name = "polars" },
@@ -645,6 +646,7 @@ requires-dist = [
     { name = "nbsphinx", marker = "extra == 'docs'", specifier = "==0.8.1" },
     { name = "notebook" },
     { name = "numpy", specifier = ">=1.24" },
+    { name = "opendataloader-pdf" },
     { name = "pandas", specifier = ">=2.0" },
     { name = "plotly", specifier = ">=5.18" },
     { name = "polars", specifier = ">=1.40.0" },
@@ -1519,6 +1521,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/09/48/6388f1bb9da707110532cb70ec4d2822858ddfb44f1cdf1233c20a80ea4b/omegaconf-2.3.0.tar.gz", hash = "sha256:d5d4b6d29955cc50ad50c46dc269bcd92c6e00f5f90d23ab5fee7bfca4ba4cc7", size = 3298120, upload-time = "2022-12-08T20:59:22.753Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e3/94/1843518e420fa3ed6919835845df698c7e27e183cb997394e4a670973a65/omegaconf-2.3.0-py3-none-any.whl", hash = "sha256:7b4df175cdb08ba400f45cae3bdcae7ba8365db4d165fc65fd04b050ab63b46b", size = 79500, upload-time = "2022-12-08T20:59:19.686Z" },
+]
+
+[[package]]
+name = "opendataloader-pdf"
+version = "2.4.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/47/4ff03b49492bca8c4b34a43111a52c37cd50cb3c3b80880f9850e8cbac62/opendataloader_pdf-2.4.1.tar.gz", hash = "sha256:32862027e72970a2dd12afea5d77aa560dbc0b1d356a2da014337716017cfcd0", size = 22538009, upload-time = "2026-04-30T08:41:42.389Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e9/d8/7dfe4e45937e9bcfa9221c7f990fc08c9e5c77f6ccdc83bebb88e23c6af0/opendataloader_pdf-2.4.1-py3-none-any.whl", hash = "sha256:ebf410756f261f97dc3e5064ee1e75d9b83a0554535da0eb57bfc5f76549a166", size = 22551868, upload-time = "2026-04-30T08:41:38.795Z" },
 ]
 
 [[package]]

@@ -3,6 +3,11 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
 
-train_data:
-  type: pandas.CSVDataset
-  filepath: data/01_raw/garments_worker_productivity.csv
+# Credit Risk Project Catalog
+# Layer: 01_raw
+
+raw_credit_data:
+  type: pandas.ExcelDataset
+  filepath: gs://credit-risk-analytics/01_raw/default_of_credit_card_clients.xls # This is the initial raw data for the project stored in GCS 
+  load_args:
+    header: 1
