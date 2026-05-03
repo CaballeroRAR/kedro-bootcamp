@@ -13,6 +13,15 @@ intermediate_credit_data:
   type: pandas.ParquetDataset
   filepath: data/02_intermediate/credit_data_cleaned.parquet
 
+# Layer: 05_model_input
+X_train_balanced_catboost:
+  type: pandas.ParquetDataset
+  filepath: data/05_model_input/X_train_balanced_catboost.parquet
+
+X_test_catboost:
+  type: pandas.ParquetDataset
+  filepath: data/05_model_input/X_test_catboost.parquet
+
 # Layer: 07_model_output
 catboost_model:
   type: pickle.PickleDataset

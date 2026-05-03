@@ -23,9 +23,7 @@ def create_feature_eng_pipeline(**kwargs) -> Pipeline:
                 inputs=["catboost_ready_data", "parameters"],
                 outputs=[
                     "X_train_balanced_catboost", 
-                    "X_test_catboost", 
-                    "y_train_balanced_catboost", 
-                    "y_test_catboost"
+                    "X_test_catboost"
                 ],
                 name="split_and_balance_catboost_node",
                 tags=["catboost"],

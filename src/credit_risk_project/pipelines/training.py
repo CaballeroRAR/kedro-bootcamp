@@ -21,14 +21,14 @@ def create_model_specific_pipeline(model_name: str) -> Pipeline:
             ),
             node(
                 func=evaluate_models,
-                inputs=[f"y_test_{model_name}", f"y_prob_{model_name}"],
+                inputs=[f"X_test_{model_name}", f"y_prob_{model_name}"],
                 outputs=f"{model_name}_metrics",
                 name=f"evaluate_{model_name}_node",
                 tags=[model_name],
             ),
             node(
                 func=evaluate_calibration,
-                inputs=[f"y_test_{model_name}", f"y_prob_{model_name}"],
+                inputs=[f"X_test_{model_name}", f"y_prob_{model_name}"],
                 outputs=f"{model_name}_calibration",
                 name=f"calibrate_{model_name}_node",
                 tags=[model_name],
