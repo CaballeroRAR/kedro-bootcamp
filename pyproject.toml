@@ -27,6 +27,8 @@ dependencies = [
     "polars>=1.40.0",
     "imbalanced-learn",
     "fastexcel",
+    "kedro-datasets[polars,pandas]",
+    "xgboost>=3.2.0",
 ]
 
 [project.scripts]
