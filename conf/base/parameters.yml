@@ -32,11 +32,10 @@ target: default_payment_next_month
 
 modeling:
   train_fraction: 0.8
-  random_seed: 42
-  
+  random_seed: 72
   catboost:
     iterations: 1000
-    learning_rate: 0.05
+    learning_rate: 0.01
     depth: 6
     loss_function: Logloss
     eval_metric: AUC
