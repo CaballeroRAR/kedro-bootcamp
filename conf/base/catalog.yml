@@ -13,25 +13,23 @@ intermediate_credit_data:
   type: pandas.ParquetDataset
   filepath: data/02_intermediate/credit_data_cleaned.parquet
 
-# Layer: 04_feature
-# Shared Split across all models
-train_split:
+boost_ready_data:
   type: pandas.ParquetDataset
-  filepath: data/04_feature/train_split.parquet
+  filepath: data/02_intermediate/boost_ready_data.parquet
 
-test_split:
+# Layer: 04_feature
+train_split_boost:
   type: pandas.ParquetDataset
-  filepath: data/04_feature/test_split.parquet
+  filepath: data/04_feature/train_split_boost.parquet
+
+test_split_boost:
+  type: pandas.ParquetDataset
+  filepath: data/04_feature/test_split_boost.parquet
 
 # Layer: 05_model_input
-# Model-specific oversampled/processed training data
-train_oversampled_catboost:
+train_oversampled_boost:
   type: pandas.ParquetDataset
-  filepath: data/05_model_input/train_oversampled_catboost.parquet
-
-train_categorical_xgboost:
-  type: pandas.ParquetDataset
-  filepath: data/05_model_input/train_categorical_xgboost.parquet
+  filepath: data/05_model_input/train_oversampled_boost.parquet
 
 # Layer: 07_model_output
 catboost_model:
