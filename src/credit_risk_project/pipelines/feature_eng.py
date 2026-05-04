@@ -1,7 +1,7 @@
 from kedro.pipeline import Pipeline, node
-from .nodes import preprocess_raw_data, no_fen_catboost, split_and_balance_data
+from .nodes import preprocess_raw_data, no_fen_boost, split_data, smote_balance
 
-def create_feature_eng_pipeline(**kwargs) -> Pipeline:
+def feature_eng_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
             node(
@@ -12,21 +12,29 @@ def create_feature_eng_pipeline(**kwargs) -> Pipeline:
             ),
             # CatBoost Branch
             node(
-                func=no_fen_catboost,
+                func=no_fen_boost,
                 inputs=["intermediate_credit_data", "parameters"],
-                outputs="catboost_ready_data",
-                name="no_fen_catboost_node",
-                tags=["catboost"],
+                outputs="boost_ready_data", # No scalation
+                name="no_fen_boost_node",
+                tags=["no_fen_boost"],
             ),
             node(
-                func=split_and_balance_data,
-                inputs=["catboost_ready_data", "parameters"],
+                func=split_data,
+                inputs=["boost_ready_data", "parameters"],
                 outputs=[
-                    "X_train_balanced_catboost", 
-                    "X_test_catboost"
+                    "train_split_boost", 
+                    "test_split_boost"
                 ],
-                name="split_and_balance_catboost_node",
-                tags=["catboost"],
+                name="split_data_boost_node",
+                tags=["boost_split"],
             ),
+            node(
+                func=smote_balance,
+                inputs=["train_split_boost", "parameters"],
+                outputs="train_oversampled_boost",
+                name="oversample_boost_node",
+                tags=["boost_oversample"],
+            ),
+            
         ]
     )

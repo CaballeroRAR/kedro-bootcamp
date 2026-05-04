@@ -17,15 +17,15 @@ def preprocess_raw_data(df: pd.DataFrame) -> pd.DataFrame:
         df = df.drop(columns=['ID'])
     return df
 
-def no_fen_catboost(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
+def no_fen_boost(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
     """Prepares data for CatBoost."""
     return df
 
-def split_and_balance_data(
+def split_data(
     df: pd.DataFrame, 
     params: Dict[str, Any]
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Split and apply SMOTE with Pandas."""
+    """Split data for model training and testing."""
     X = df.drop(columns=['target'])
     y = df['target']
     
@@ -36,16 +36,29 @@ def split_and_balance_data(
         stratify=y
     )
     
-    smote = SMOTE(random_state=params["modeling"]["random_seed"])
-    X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
-    
-    train_df = pd.DataFrame(X_train_res, columns=X.columns)
-    train_df['target'] = y_train_res
+    train_df = pd.DataFrame(X_train, columns=X.columns)
+    train_df['target'] = y_train
     
     test_df = X_test.copy()
     test_df['target'] = y_test
     
     return train_df, test_df
+
+def smote_balance(
+    df_split: pd.DataFrame,
+    params: Dict[str, Any]
+) -> pd.DataFrame:
+    """Apply SMOTE with Pandas."""
+
+    X = df_split.drop(columns=['target'])
+    y = df_split['target']
+    smote = SMOTE(random_state=params["modeling"]["random_seed"])
+
+    X_res, y_res = smote.fit_resample(X, y)
+    train_df_smote = pd.DataFrame(X_res, columns=X.columns)
+    train_df_smote['target'] = y_res
+    return train_df_smote   
+
 
 def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostClassifier:
     """Train CatBoost Classifier."""
