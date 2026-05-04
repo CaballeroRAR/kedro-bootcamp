@@ -1,0 +1,32 @@
+# Layer: 01_raw
+raw_credit_data:
+  filepath: gs://credit-risk-analytics/01_raw/default_of_credit_card_clients.xls
+
+# Layer: 02_intermediate
+intermediate_credit_data:
+  filepath: gs://credit-risk-analytics/02_intermediate/credit_data_cleaned.parquet
+
+boost_ready_data:
+  filepath: gs://credit-risk-analytics/02_intermediate/boost_ready_data.parquet
+
+# Layer: 04_feature
+train_split_boost:
+  filepath: gs://credit-risk-analytics/04_feature/train_split_boost.parquet
+
+test_split_boost:
+  filepath: gs://credit-risk-analytics/04_feature/test_split_boost.parquet
+
+# Layer: 05_model_input
+train_oversampled_boost:
+  filepath: gs://credit-risk-analytics/05_model_input/train_oversampled_boost.parquet
+
+# Layer: 07_model_output
+catboost_model:
+  filepath: gs://credit-risk-analytics/07_model_output/catboost_model.pkl
+
+# Layer: 08_reporting
+catboost_metrics:
+  filepath: gs://credit-risk-analytics/08_reporting/catboost_metrics.json
+
+catboost_calibration:
+  filepath: gs://credit-risk-analytics/08_reporting/catboost_calibration.json
