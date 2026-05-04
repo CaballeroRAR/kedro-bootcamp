@@ -24,8 +24,8 @@ def no_fen_catboost(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
 def split_and_balance_data(
     df: pd.DataFrame, 
     params: Dict[str, Any]
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Split and apply SMOTE using Pandas."""
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Split and apply SMOTE with Pandas."""
     X = df.drop(columns=['target'])
     y = df['target']
     
