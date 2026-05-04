@@ -59,6 +59,12 @@ def smote_balance(
     train_df_smote['target'] = y_res
     return train_df_smote   
 
+def apply_categorical_xgb(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
+    """Apply categorical type to features for XGBoost."""
+    cat_features = params["features"]["categorical"]
+    df[cat_features] = df[cat_features].astype("category")
+    
+    return df
 
 def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostClassifier:
     """Train CatBoost Classifier."""
