@@ -66,17 +66,7 @@ def apply_categorical_xgb(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFr
     
     return df
 
-def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostClassifier:
-    """Train CatBoost Classifier."""
-    X_train = train_df.drop(columns=['target'])
-    y_train = train_df['target']
-    
-    model_params = params["modeling"]["catboost"]
-    cat_features = params["features"]["categorical"]
-    
-    model = CatBoostClassifier(**model_params)
-    model.fit(X_train, y_train, cat_features=cat_features)
-    return model
+
 
 def predict_probabilities(model: Any, test_df: pd.DataFrame) -> np.ndarray:
     """Generate probability predictions."""
@@ -104,3 +94,34 @@ def evaluate_calibration(y_test: pd.DataFrame, y_prob: np.ndarray) -> Dict[str, 
         "calibration_slope_B": float(lr.coef_[0]),
         "r2_score": float(lr.score(y_prob.reshape(-1, 1), y_true))
     }
+
+
+
+# MODEL TRAIN NODES
+
+def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostClassifier:
+    """Train CatBoost Classifier."""
+    X_train = train_df.drop(columns=['target'])
+    y_train = train_df['target']
+    
+    model_params = params["modeling"]["catboost"]
+    cat_features = params["features"]["categorical"]
+    
+    model = CatBoostClassifier(**model_params)
+    model.fit(X_train, y_train, cat_features=cat_features)
+    return model
+
+def train_xgboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> xgb.XGBClassifier:
+    """Train XGBoost Classifier."""
+    X_train = train_df.drop(columns=['target'])
+    y_train = train_df['target']
+    
+    model_params = params["modeling"]["xgboost"]
+    model = xgb.XGBClassifier(**model_params)
+    model.fit(X_train, y_train)
+    return model
+
+def train_ann(train_df: pd.DataFrame, params: Dict[str, Any]) -> Any:
+    """Placeholder for ANN training."""
+    
+    return None

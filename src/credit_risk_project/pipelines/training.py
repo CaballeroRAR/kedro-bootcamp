@@ -1,45 +1,46 @@
 from kedro.pipeline import Pipeline, node
-from .nodes import train_catboost, predict_probabilities, evaluate_models, evaluate_calibration
+from .nodes import train_catboost, train_xgboost, train_ann
 
 def create_model_specific_pipeline(model_name: str) -> Pipeline:
-    """Factory to create a training pipeline for a specific model."""
+    """Factory to create a training-only pipeline for a specific model."""
+    
+    # Model Configuration Dispatcher
+    MODEL_CONFIG = {
+        "catboost": {
+            "train_func": train_catboost,
+            "train_ds": "train_oversampled_boost",
+        },
+        "xgboost": {
+            "train_func": train_xgboost,
+            "train_ds": "train_categorical_xgboost",
+        },
+        "ann": {
+            "train_func": train_ann,
+            "train_ds": "train_scaled_ann", # Placeholder
+        },
+    }
+
+    if model_name not in MODEL_CONFIG:
+        raise ValueError(f"Model {model_name} not supported by training factory.")
+
+    config = MODEL_CONFIG[model_name]
+
     return Pipeline(
         [
             node(
-                func=train_catboost if model_name == "catboost" else None, # Placeholder for others
-                inputs=[f"X_train_balanced_{model_name}", "parameters"],
+                func=config["train_func"],
+                inputs=[config["train_ds"], "parameters"],
                 outputs=f"{model_name}_model",
                 name=f"train_{model_name}_node",
-                tags=[model_name],
-            ),
-            node(
-                func=predict_probabilities,
-                inputs=[f"{model_name}_model", f"X_test_{model_name}"],
-                outputs=f"y_prob_{model_name}",
-                name=f"predict_{model_name}_node",
-                tags=[model_name],
-            ),
-            node(
-                func=evaluate_models,
-                inputs=[f"X_test_{model_name}", f"y_prob_{model_name}"],
-                outputs=f"{model_name}_metrics",
-                name=f"evaluate_{model_name}_node",
-                tags=[model_name],
-            ),
-            node(
-                func=evaluate_calibration,
-                inputs=[f"X_test_{model_name}", f"y_prob_{model_name}"],
-                outputs=f"{model_name}_calibration",
-                name=f"calibrate_{model_name}_node",
-                tags=[model_name],
+                tags=[model_name, "training"],
             ),
         ]
     )
 
 def create_training_pipeline(**kwargs) -> Pipeline:
-    """Aggregates all model pipelines into a single training entry point."""
-    catboost_pipeline = create_model_specific_pipeline("catboost")
-    # xg_pipeline = create_model_specific_pipeline("xgboost")
-    # ann_pipeline = create_model_specific_pipeline("ann")
-    
-    return catboost_pipeline # + xg_pipeline + ann_pipeline
+    """Aggregates all training-only pipelines."""
+    return (
+        create_model_specific_pipeline("catboost") +
+        create_model_specific_pipeline("xgboost") +
+        create_model_specific_pipeline("ann")
+    )
