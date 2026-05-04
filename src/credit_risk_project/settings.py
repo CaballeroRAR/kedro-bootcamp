@@ -6,7 +6,8 @@ https://docs.kedro.org/en/stable/configure/configuration_basics/#configuration""
 # For example, after creating a hooks.py and defining a ProjectHooks class there, do
 # from free_bootcamp_mlacademy.hooks import ProjectHooks
 # Hooks are executed in a Last-In-First-Out (LIFO) order.
-# HOOKS = (ProjectHooks(),)
+from credit_risk_project.hooks import CloudSyncHook
+HOOKS = (CloudSyncHook(bucket_name="credit-risk-analytics"),)
 
 # Installed plugins for which to disable hook auto-registration.
 # DISABLE_HOOKS_FOR_PLUGINS = ("kedro-viz",)

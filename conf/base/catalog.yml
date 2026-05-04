@@ -3,7 +3,7 @@
 
 raw_credit_data:
   type: pandas.ExcelDataset
-  filepath: gs://credit-risk-analytics/01_raw/default_of_credit_card_clients.xls 
+  filepath: data/01_raw/default_of_credit_card_clients.xls
   load_args:
     header: 1
     engine: xlrd
@@ -13,14 +13,25 @@ intermediate_credit_data:
   type: pandas.ParquetDataset
   filepath: data/02_intermediate/credit_data_cleaned.parquet
 
-# Layer: 05_model_input
-X_train_balanced_catboost:
+# Layer: 04_feature
+# Shared Split across all models
+train_split:
   type: pandas.ParquetDataset
-  filepath: data/05_model_input/X_train_balanced_catboost.parquet
+  filepath: data/04_feature/train_split.parquet
 
-X_test_catboost:
+test_split:
   type: pandas.ParquetDataset
-  filepath: data/05_model_input/X_test_catboost.parquet
+  filepath: data/04_feature/test_split.parquet
+
+# Layer: 05_model_input
+# Model-specific oversampled/processed training data
+train_oversampled_catboost:
+  type: pandas.ParquetDataset
+  filepath: data/05_model_input/train_oversampled_catboost.parquet
+
+train_categorical_xgboost:
+  type: pandas.ParquetDataset
+  filepath: data/05_model_input/train_categorical_xgboost.parquet
 
 # Layer: 07_model_output
 catboost_model:
