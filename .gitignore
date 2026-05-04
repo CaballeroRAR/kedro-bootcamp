@@ -1,6 +1,9 @@
 ##########################
 # KEDRO PROJECT
 
+
+# ignore files for the agents
+generate_map.py
 # ignore all local configuration
 conf/local/**
 !conf/local/.gitkeep
