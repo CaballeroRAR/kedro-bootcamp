@@ -8,20 +8,20 @@ def create_model_specific_pipeline(model_name: str) -> Pipeline:
     MODEL_CONFIG = {
         "catboost": {
             "train_func": train_catboost,
-            "train_ds": "train_oversampled_boost",
+            "train_ds": "train_ready_catboost",
         },
         "xgboost": {
             "train_func": train_xgboost,
-            "train_ds": "train_categorical_xgboost",
+            "train_ds": "train_ready_xgboost",
         },
         "ann": {
             "train_func": train_ann,
-            "train_ds": "train_scaled_ann", # Placeholder
+            "train_ds": "train_ready_ann",
         },
     }
 
     if model_name not in MODEL_CONFIG:
-        raise ValueError(f"Model {model_name} not supported by training factory.")
+        raise ValueError(f"Model {model_name} information not found.")
 
     config = MODEL_CONFIG[model_name]
 

@@ -7,6 +7,11 @@ from sklearn.metrics import roc_auc_score, brier_score_loss, log_loss
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
+
+def identity_node(data: Any) -> Any:
+    """Pass-through node for modular branching."""
+    return data
 
 def preprocess_raw_data(df: pd.DataFrame) -> pd.DataFrame:
     """Clean raw Excel data using Pandas."""
@@ -58,6 +63,24 @@ def smote_balance(
     train_df_smote = pd.DataFrame(X_res, columns=X.columns)
     train_df_smote['target'] = y_res
     return train_df_smote   
+
+def scale_data_ann(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, StandardScaler]:
+    """Applies Standard Scaling to numerical features for ANN and returns the fitted scaler."""
+    X_train = train_df.drop(columns=['target'])
+    X_test = test_df.drop(columns=['target'])
+    
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    # Reconstruct DataFrames
+    train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns, index=train_df.index)
+    train_scaled['target'] = train_df['target']
+    
+    test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns, index=test_df.index)
+    test_scaled['target'] = test_df['target']
+    
+    return train_scaled, test_scaled, scaler
 
 def apply_categorical_xgb(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
     """Apply categorical type to features for XGBoost."""

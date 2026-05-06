@@ -51,6 +51,12 @@ modeling:
     eval_metric: auc
     early_stopping_rounds: 50
     verbosity: 0
+  ann:
+    hidden_layers: [64, 32]
+    activation: relu
+    optimizer: adam
+    epochs: 50
+    batch_size: 32
 
 evaluation:
   metrics:
