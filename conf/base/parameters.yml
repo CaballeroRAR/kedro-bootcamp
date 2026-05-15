@@ -37,6 +37,8 @@ modeling:
     iterations: 1000
     learning_rate: 0.01
     depth: 6
+    l2_leaf_reg: 5.0
+    auto_class_weights: Balanced
     loss_function: Logloss
     eval_metric: AUC
     early_stopping_rounds: 50
