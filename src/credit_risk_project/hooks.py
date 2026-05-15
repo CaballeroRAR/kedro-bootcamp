@@ -17,7 +17,7 @@ class CloudSyncHook:
             # -r: recursive
             # -d: delete files in destination not in source (optional, excluded here for safety)
             subprocess.run(
-                ["gsutil", "-m", "rsync", "-r", "data/", f"gs://{self.bucket_name}/"],
+                ["gsutil.cmd", "-m", "rsync", "-r", "data/", f"gs://{self.bucket_name}/"],
                 check=True,
                 capture_output=True,
                 text=True
