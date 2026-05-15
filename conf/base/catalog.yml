@@ -68,9 +68,7 @@ fitted_scaler_ann:
 
 # Layer: 07_model_output
 catboost_model:
-  type: pickle.PickleDataset
-  filepath: data/07_model_output/catboost_model.pkl
-  backend: joblib
+  type: MemoryDataset
 
 xgboost_model:
   type: pickle.PickleDataset

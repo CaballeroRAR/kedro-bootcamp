@@ -20,9 +20,6 @@ test_split_boost:
 train_oversampled_boost:
   filepath: gs://credit-risk-analytics/05_model_input/train_oversampled_boost.parquet
 
-# Layer: 07_model_output
-catboost_model:
-  filepath: gs://credit-risk-analytics/07_model_output/catboost_model.pkl
 
 # Layer: 08_reporting
 catboost_metrics:

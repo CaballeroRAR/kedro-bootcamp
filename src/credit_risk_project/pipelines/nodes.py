@@ -158,6 +158,11 @@ def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostCl
     
     model = CatBoostClassifier(**model_params)
     model.fit(X_train, y_train, cat_features=cat_features)
+    
+    import os
+    os.makedirs("data/06_models", exist_ok=True)
+    model.save_model("data/06_models/catboost_model.cbm")
+    
     return model
 
 def train_xgboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> xgb.XGBClassifier:
