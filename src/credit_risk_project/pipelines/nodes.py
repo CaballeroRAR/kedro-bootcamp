@@ -14,12 +14,38 @@ def identity_node(data: Any) -> Any:
     return data
 
 def preprocess_raw_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Clean raw Excel data using Pandas."""
-    target_col = 'default payment next month'
-    if target_col in df.columns:
-        df = df.rename(columns={target_col: 'target'})
+    """Clean raw Excel data and standardize feature column names to X1-X23."""
+    rename_map = {
+        'LIMIT_BAL': 'X1',
+        'SEX': 'X2',
+        'EDUCATION': 'X3',
+        'MARRIAGE': 'X4',
+        'AGE': 'X5',
+        'PAY_0': 'X6',
+        'PAY_2': 'X7',
+        'PAY_3': 'X8',
+        'PAY_4': 'X9',
+        'PAY_5': 'X10',
+        'PAY_6': 'X11',
+        'BILL_AMT1': 'X12',
+        'BILL_AMT2': 'X13',
+        'BILL_AMT3': 'X14',
+        'BILL_AMT4': 'X15',
+        'BILL_AMT5': 'X16',
+        'BILL_AMT6': 'X17',
+        'PAY_AMT1': 'X18',
+        'PAY_AMT2': 'X19',
+        'PAY_AMT3': 'X20',
+        'PAY_AMT4': 'X21',
+        'PAY_AMT5': 'X22',
+        'PAY_AMT6': 'X23',
+        'default payment next month': 'target'
+    }
+    
     if 'ID' in df.columns:
         df = df.drop(columns=['ID'])
+        
+    df = df.rename(columns=rename_map)
     return df
 
 def no_fen_boost(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:

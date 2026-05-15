@@ -3,7 +3,7 @@
 
 raw_credit_data:
   type: pandas.ExcelDataset
-  filepath: data/01_raw/default_of_credit_card_clients.xls
+  filepath: data/01_raw/default of credit card clients.xls
   load_args:
     header: 1
     engine: xlrd

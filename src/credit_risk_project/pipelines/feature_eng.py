@@ -47,7 +47,8 @@ def create_fen_model_pipeline(model_name: str) -> Pipeline:
         func=config["pre_split"],
         inputs=pre_split_inputs,
         outputs=f"fen_input_{model_name}",
-        name=f"pre_split_{model_name}_node"
+        name=f"pre_split_{model_name}_node",
+        tags=[model_name, "feature_eng"]
     ))
 
     # 2. Split
@@ -55,7 +56,8 @@ def create_fen_model_pipeline(model_name: str) -> Pipeline:
         func=split_data,
         inputs=[f"fen_input_{model_name}", "parameters"],
         outputs=[f"raw_train_{model_name}", f"raw_test_{model_name}"],
-        name=f"split_{model_name}_node"
+        name=f"split_{model_name}_node",
+        tags=[model_name, "feature_eng"]
     ))
 
     # 3. Post-split logic
@@ -65,13 +67,15 @@ def create_fen_model_pipeline(model_name: str) -> Pipeline:
                 func=scale_data_ann,
                 inputs=[f"raw_train_{model_name}", f"raw_test_{model_name}"],
                 outputs=[f"scaled_train_{model_name}", config["outputs"][1], f"fitted_scaler_{model_name}"],
-                name=f"scale_{model_name}_node"
+                name=f"scale_{model_name}_node",
+                tags=[model_name, "feature_eng"]
             ),
             node(
                 func=smote_balance,
                 inputs=[f"scaled_train_{model_name}", "parameters"],
                 outputs=config["outputs"][0],
-                name=f"smote_{model_name}_node"
+                name=f"smote_{model_name}_node",
+                tags=[model_name, "feature_eng"]
             )
         ])
     else:
@@ -81,13 +85,15 @@ def create_fen_model_pipeline(model_name: str) -> Pipeline:
                 func=identity_node,
                 inputs=f"raw_train_{model_name}",
                 outputs=config["outputs"][0],
-                name=f"pass_train_{model_name}_node"
+                name=f"pass_train_{model_name}_node",
+                tags=[model_name, "feature_eng"]
             ),
             node(
                 func=identity_node,
                 inputs=f"raw_test_{model_name}",
                 outputs=config["outputs"][1],
-                name=f"pass_test_{model_name}_node"
+                name=f"pass_test_{model_name}_node",
+                tags=[model_name, "feature_eng"]
             )
         ])
         
@@ -100,6 +106,7 @@ def create_feature_eng_pipeline(**kwargs) -> Pipeline:
         inputs="raw_credit_data",
         outputs="intermediate_credit_data",
         name="preprocess_raw_data_node",
+        tags=["feature_eng", "catboost", "xgboost", "ann"]
     )
     
     # 2. Model-specific FEN branches
