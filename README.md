@@ -1,12 +1,46 @@
-# free-bootcamp-mlacademy
+# Credit Risk Analysis - Kedro Bootcamp
 
 [![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
 
 ## Overview
 
-This is your new Kedro project, which was generated using `kedro 1.3.1`.
+This project implements credit risk modeling using machine learning pipelines built on the Kedro framework.
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
+### Dataset Context
+The project utilizes payment data from October 2005 of an important bank (a cash and credit card issuer) in Taiwan. The target population consists of credit card holders of the bank.
+
+This work is based on the research case:
+> Yeh, I. C., & Lien, C. H. (2009). *The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients*. Expert Systems with Applications, 36(2), 2473-2480. 
+> Paper link: [Semantic Scholar](https://www.semanticscholar.org/paper/The-comparisons-of-data-mining-techniques-for-the-Yeh-Lien/1cacac4f0ea9fdff3cd88c151c94115a9fddcf33)
+
+- **Total Observations**: 25,000
+- **Default Payments**: 5,529 (22.12%)
+- **Response Variable**: `default payment` (binary: 1 = Yes/Default, 0 = No/Non-default)
+
+### Feature Definitions
+- **X1**: Amount of the given credit (NT dollar). Includes individual consumer credit and family (supplementary) credit.
+- **X2**: Gender (1 = male; 2 = female).
+- **X3**: Education (1 = graduate school; 2 = university; 3 = high school; 4 = others).
+- **X4**: Marital status (1 = married; 2 = single; 3 = others).
+- **X5**: Age (year).
+- **X6–X11**: History of past payment (tracked monthly from April to September 2005):
+  - X6 = repayment status in September, 2005
+  - X7 = repayment status in August, 2005
+  - ...
+  - X11 = repayment status in April, 2005
+  - *Measurement Scale:* -1 = pay duly; 1 = payment delay for one month; 2 = payment delay for two months; ...; 8 = payment delay for eight months; 9 = payment delay for nine months and above.
+- **X12–X17**: Amount of bill statement (NT dollar):
+  - X12 = bill statement amount in September, 2005
+  - X13 = bill statement amount in August, 2005
+  - ...
+  - X17 = bill statement amount in April, 2005
+- **X18–X23**: Amount of previous payment (NT dollar):
+  - X18 = amount paid in September, 2005
+  - X19 = amount paid in August, 2005
+  - ...
+  - X23 = amount paid in April, 2005
+
+---
 
 ## Kedro Project Structure & Data Flow
 
@@ -14,115 +48,21 @@ This section explains the relationship between the YAML configurations, the pipe
 
 ### 1. Data Catalog (`conf/base/catalog.yml`)
 The [catalog.yml](conf/base/catalog.yml) registers your datasets. It maps logical names used in the code to physical storage.
-*   **Logic:** When a node refers to a dataset name (e.g., `train_data`), Kedro uses this file to determine the file path and dataset type (e.g., `pandas.CSVDataset`).
+*   **Logic:** When a node refers to a dataset name (e.g., `train_ready_catboost`), Kedro uses this file to determine the file path and dataset type (e.g., `pandas.ParquetDataset`).
 
 ### 2. Parameters (`conf/base/parameters.yml`)
 Configuration values and hyperparameters are stored in [parameters.yml](conf/base/parameters.yml). 
-*   **Logic:** These are injected into pipelines using the `params:` prefix (e.g., `params:feature_engineering.lag_params`).
+*   **Logic:** These are injected into pipelines using the `params:` prefix or as the `parameters` dictionary.
 
-### 3. Pipeline Definitions (`src/timeseries_project/pipelines/`)
+### 3. Pipeline Definitions (`src/credit_risk_project/pipelines/`)
 Pipelines define the execution graph (DAG).
 *   **Nodes:** Call Python functions from `nodes.py`.
 *   **Inputs/Outputs:** Link to either the **Catalog** (for persistent data) or **Memory** (for intermediate results).
-*   **Example:** A node with `inputs=["train_data"]` loads the dataset defined in the catalog.
 
-### 4. Pipeline Registry (`src/timeseries_project/pipeline_registry.py`)
+### 4. Pipeline Registry (`src/credit_risk_project/pipeline_registry.py`)
 This file is the entry point for the Kedro CLI.
 *   **Logic:** It maps string aliases to pipeline objects.
 *   **CLI Mapping:**
     *   `kedro run` executes the `__default__` pipeline.
     *   `kedro run --pipeline=feature_eng` executes the `feature_eng` alias.
-
----
-
-## Rules and guidelines
-
-In order to get the best out of the template:
-
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a data engineering convention
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
-
-## How to install dependencies
-
-Declare any dependencies in `requirements.txt` for `pip` installation.
-
-To install them, run:
-
-```
-pip install -r requirements.txt
-```
-
-## How to run your Kedro pipeline
-
-You can run your Kedro project with:
-
-```
-kedro run
-```
-
-## How to test your Kedro project
-
-Have a look at the file `tests/test_run.py` for instructions on how to write your tests. You can run your tests as follows:
-
-```
-pytest
-```
-
-You can configure the coverage threshold in your project's `pyproject.toml` file under the `[tool.coverage.report]` section.
-
-
-## Project dependencies
-
-To see and update the dependency requirements for your project use `requirements.txt`. You can install the project requirements with `pip install -r requirements.txt`.
-
-[Further information about project dependencies](https://docs.kedro.org/en/stable/kedro_project_setup/dependencies.html#project-specific-dependencies)
-
-## How to work with Kedro and notebooks
-
-> Note: Using `kedro jupyter` or `kedro ipython` to run your notebook provides these variables in scope: `context`, 'session', `catalog`, and `pipelines`.
->
-> Jupyter, JupyterLab, and IPython are already included in the project requirements by default, so once you have run `pip install -r requirements.txt` you will not need to take any extra steps before you use them.
-
-### Jupyter
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
-
-```
-pip install jupyter
-```
-
-After installing Jupyter, you can start a local notebook server:
-
-```
-kedro jupyter notebook
-```
-
-### JupyterLab
-To use JupyterLab, you need to install it:
-
-```
-pip install jupyterlab
-```
-
-You can also start JupyterLab:
-
-```
-kedro jupyter lab
-```
-
-### IPython
-And if you want to run an IPython session:
-
-```
-kedro ipython
-```
-
-### How to ignore notebook output cells in `git`
-To automatically strip out all output cell contents before committing to `git`, you can use tools like [`nbstripout`](https://github.com/kynan/nbstripout). For example, you can add a hook in `.git/config` with `nbstripout --install`. This will run `nbstripout` before anything is committed to `git`.
-
-> *Note:* Your output cells will be retained locally.
-
-## Package your Kedro project
-
-[Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/deploy/package_a_project/#package-an-entire-kedro-project)
+    *   `kedro run --pipeline=training` executes the `training` alias.
