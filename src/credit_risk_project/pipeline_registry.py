@@ -1,5 +1,5 @@
 from .pipelines.feature_eng import create_feature_eng_pipeline
-from .pipelines.training import create_training_pipeline
+from .pipelines.training import create_training_pipeline, create_model_specific_pipeline
 from kedro.pipeline import Pipeline
 
 def register_pipelines() -> dict[str, Pipeline]:
@@ -10,4 +10,7 @@ def register_pipelines() -> dict[str, Pipeline]:
         "__default__": feature_eng_pipeline + training_pipeline,
         "feature_eng": feature_eng_pipeline,
         "training": feature_eng_pipeline + training_pipeline,
+        "catboost": feature_eng_pipeline + create_model_specific_pipeline("catboost"),
+        "xgboost": feature_eng_pipeline + create_model_specific_pipeline("xgboost"),
+        "ann": feature_eng_pipeline + create_model_specific_pipeline("ann"),
     }

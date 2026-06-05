@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
 
 def identity_node(data: Any) -> Any:
     """Pass-through node for modular branching."""
@@ -188,7 +189,21 @@ def train_xgboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> xgb.XGBClas
     )
     return model
 
-def train_ann(train_df: pd.DataFrame, params: Dict[str, Any]) -> Any:
-    """Placeholder for ANN training."""
+def train_ann(train_df: pd.DataFrame, params: Dict[str, Any]) -> MLPClassifier:
+    """Train Artificial Neural Network Classifier."""
+    X_train = train_df.drop(columns=['target'])
+    y_train = train_df['target']
     
-    return None
+    ann_params = params["modeling"]["ann"]
+    
+    model = MLPClassifier(
+        hidden_layer_sizes=tuple(ann_params["hidden_layers"]),
+        activation=ann_params["activation"],
+        solver=ann_params["optimizer"],
+        max_iter=ann_params["epochs"],
+        batch_size=ann_params["batch_size"],
+        random_state=params["modeling"]["random_seed"]
+    )
+    
+    model.fit(X_train, y_train)
+    return model
