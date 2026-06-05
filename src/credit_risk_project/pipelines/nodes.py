@@ -167,12 +167,25 @@ def train_catboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> CatBoostCl
 
 def train_xgboost(train_df: pd.DataFrame, params: Dict[str, Any]) -> xgb.XGBClassifier:
     """Train XGBoost Classifier."""
-    X_train = train_df.drop(columns=['target'])
-    y_train = train_df['target']
+    X = train_df.drop(columns=['target'])
+    y = train_df['target']
+    
+    # Split train_df into train and validation sets (12.5% validation) for early stopping
+    X_train, X_val, y_train, y_val = train_test_split(
+        X, y, 
+        test_size=0.125, 
+        random_state=params["modeling"]["random_seed"],
+        stratify=y
+    )
     
     model_params = params["modeling"]["xgboost"]
-    model = xgb.XGBClassifier(**model_params)
-    model.fit(X_train, y_train)
+    # enable_categorical=True is required to support pandas category dtypes
+    model = xgb.XGBClassifier(**model_params, enable_categorical=True)
+    model.fit(
+        X_train, y_train,
+        eval_set=[(X_val, y_val)],
+        verbose=False
+    )
     return model
 
 def train_ann(train_df: pd.DataFrame, params: Dict[str, Any]) -> Any:
